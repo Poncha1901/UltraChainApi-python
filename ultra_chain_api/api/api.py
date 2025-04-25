@@ -1,5 +1,4 @@
 from enum import Enum
-import json
 from typing import Any, Optional
 import requests
 from ultra_chain_api.interfaces.code_response import CodeResponse
@@ -7,12 +6,12 @@ from ultra_chain_api.interfaces.factory_response import FactoryResponse
 from ultra_chain_api.interfaces.producer_response import ProducersResponse
 from ultra_chain_api.interfaces.uniq import Uniq
 
-from ..interfaces.abi_response import AbiResponse
-from ..interfaces.account_response import AccountResponse
-from ..interfaces.block_response import BlockResponse
-from ..interfaces.chain_info_response import ChainInfoResponse
-from ..interfaces.table_scope import BaseTableResponse, TableResponse
-from ..interfaces.transaction_response import TransactionResponse
+from ultra_chain_api.interfaces.abi_response import AbiResponse
+from ultra_chain_api.interfaces.account_response import AccountResponse
+from ultra_chain_api.interfaces.block_response import BlockResponse
+from ultra_chain_api.interfaces.chain_info_response import ChainInfoResponse
+from ultra_chain_api.interfaces.table_scope import BaseTableResponse, TableResponse
+from ultra_chain_api.interfaces.transaction_response import TransactionResponse
 
 
 class UltraAPIError(Exception):
@@ -102,8 +101,8 @@ class UltraAPI:
 
         try:
             return AbiResponse(**response)
-        except Exception:
-            raise UltraAPIError(f"ABI not found for account {account_name}")
+        except Exception as e:
+            raise UltraAPIError(f"Error parsing ABI for {account_name}: {e}")
 
     def get_account(self, account_name: str) -> AccountResponse:
         """
@@ -116,8 +115,8 @@ class UltraAPI:
 
         try:
             return AccountResponse(**response)
-        except Exception:
-            raise UltraAPIError(f"Account not found: {account_name}")
+        except Exception as e:
+            raise UltraAPIError(f"Error parsing Account for: {account_name} : {e}")
 
     def get_block(self, block_num_or_id: str) -> BlockResponse:
         """
@@ -130,8 +129,8 @@ class UltraAPI:
 
         try:
             return BlockResponse(**response)
-        except Exception:
-            raise UltraAPIError(f"Block not found: {block_num_or_id}")
+        except Exception as e:
+            raise UltraAPIError(f"Error parsing Block: {block_num_or_id}: {e}")
 
     def get_currency_balance(self, code: str, account: str, symbol: str) -> list[str]:
         """
@@ -140,7 +139,7 @@ class UltraAPI:
         try:
             response = self._post("/chain/get_currency_balance", {"code": code, "account": account, "symbol": symbol})
         except requests.RequestException as e:
-            raise UltraAPIError(f"Error fetching block currency balance for symbol {symbol}: {e}")
+            raise UltraAPIError(f"Error currency balance for {symbol}: {e}")
 
         return response
 
@@ -203,7 +202,7 @@ class UltraAPI:
         try:
             return TransactionResponse(**response)
         except Exception:
-            raise UltraAPIError(f"Transaction not found: {id}")
+            raise UltraAPIError(f"Error parsing Transaction: {id}")
 
     def get_code(self, account: str) -> CodeResponse:
         try:

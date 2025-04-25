@@ -5,3 +5,7 @@ from ultra_chain_api.interfaces.account_response import AccountResponse
 from ultra_chain_api.interfaces.transaction_response import TransactionResponse
 from ultra_chain_api.interfaces.chain_info_response import ChainInfoResponse
 from ultra_chain_api.interfaces.table_scope import BaseTableResponse, TableResponse
+from ultra_chain_api.interfaces.producer_response import ProducersResponse
+from ultra_chain_api.interfaces.uniq import Uniq
+from ultra_chain_api.interfaces.factory_response import FactoryResponse
+from ultra_chain_api.interfaces.code_response import CodeResponse

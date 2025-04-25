@@ -1,7 +1,8 @@
 [project]
 name = "ultrachainapi-python"
 version = "0.1.0"
-description = "Add your description here"
+description = "UltraChainAPI Python Client"
+author = "Hugo Chapon"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
