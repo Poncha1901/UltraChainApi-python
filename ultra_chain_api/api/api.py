@@ -1,10 +1,15 @@
 from enum import Enum
+import json
 from typing import Any, Optional
 import requests
+from ultra_chain_api.interfaces.code_response import CodeResponse
+from ultra_chain_api.interfaces.factory_response import FactoryResponse
+from ultra_chain_api.interfaces.producer_response import ProducersResponse
+from ultra_chain_api.interfaces.uniq import Uniq
 
 from ..interfaces.abi_response import AbiResponse
 from ..interfaces.account_response import AccountResponse
-from ..interfaces.block_reponse import BlockResponse
+from ..interfaces.block_response import BlockResponse
 from ..interfaces.chain_info_response import ChainInfoResponse
 from ..interfaces.table_scope import BaseTableResponse, TableResponse
 from ..interfaces.transaction_response import TransactionResponse
@@ -12,6 +17,16 @@ from ..interfaces.transaction_response import TransactionResponse
 
 class UltraAPIError(Exception):
     pass
+
+
+class TokenTable(Enum):
+    TOKEN_A = "token.a"
+    TOKEN_B = "token.b"
+
+
+class FactoryTable(Enum):
+    FACTORY_A = "factory.a"
+    FACTORY_B = "factory.b"
 
 
 class TestProducerEndpoint(Enum):
@@ -101,7 +116,7 @@ class UltraAPI:
 
         try:
             return AccountResponse(**response)
-        except KeyError:
+        except Exception:
             raise UltraAPIError(f"Account not found: {account_name}")
 
     def get_block(self, block_num_or_id: str) -> BlockResponse:
@@ -115,7 +130,7 @@ class UltraAPI:
 
         try:
             return BlockResponse(**response)
-        except KeyError:
+        except Exception:
             raise UltraAPIError(f"Block not found: {block_num_or_id}")
 
     def get_currency_balance(self, code: str, account: str, symbol: str) -> list[str]:
@@ -146,8 +161,8 @@ class UltraAPI:
         scope: str,
         table: str,
         limit: int,
-        lower_bound: Optional[int] = None,
-        upper_bound: Optional[int] = None,
+        lower_bound: Optional[Any] = None,
+        upper_bound: Optional[Any] = None,
     ) -> TableResponse:
         """
         API Docs: https://developers.ultra.io/products/chain-api/get-table-rows.html
@@ -158,6 +173,7 @@ class UltraAPI:
                 "scope": scope,
                 "table": table,
                 "limit": limit,
+                "json": True,
             }
             if lower_bound is not None:
                 data["lower_bound"] = lower_bound
@@ -167,10 +183,9 @@ class UltraAPI:
             response = self._post("/chain/get_table_rows", data)
         except requests.RequestException as e:
             raise UltraAPIError(f"Error fetching table rows: {e}")
-
         try:
             return TableResponse(**response)
-        except KeyError:
+        except Exception:
             raise UltraAPIError(f"Table not found: {table}")
 
     def get_transaction(self, id: str) -> TransactionResponse:
@@ -187,5 +202,72 @@ class UltraAPI:
 
         try:
             return TransactionResponse(**response)
-        except KeyError:
+        except Exception:
             raise UltraAPIError(f"Transaction not found: {id}")
+
+    def get_code(self, account: str) -> CodeResponse:
+        try:
+            response = self._post("/chain/get_code", {"account_name": account})
+        except requests.RequestException as e:
+            raise UltraAPIError(f"Error fetching code for account {account}: {e}")
+
+        try:
+            return CodeResponse(**response)
+        except Exception:
+            raise UltraAPIError(f"Code not found for account {account}")
+
+    def get_uniqs(
+        self,
+        account: str,
+        lower_bound: Optional[Any] = None,
+        tables: Optional[list[TokenTable]] = None,
+    ) -> list[Uniq]:
+        if tables is None:
+            tables = [TokenTable.TOKEN_A, TokenTable.TOKEN_B]
+
+        results: list[TableResponse] = []
+        uniqs: list[Uniq] = []
+        for table in tables:
+            response = self.get_table_rows(
+                code="eosio.nft.ft",
+                scope=account,
+                table=table.value,
+                limit=999,
+                lower_bound=lower_bound,
+            )
+            results.append(response)
+            if response.more:
+                rows = self.get_uniqs(account, response.next_key, tables=[table])
+                uniqs.extend(rows)
+
+        try:
+            for table_response in results:
+                if table_response.rows:
+                    uniqs.extend([Uniq(**row) for row in table_response.rows])
+            return uniqs
+        except Exception as e:
+            raise UltraAPIError(f"Error parsing uniqs response: {e}")
+
+    def get_producers(self) -> ProducersResponse:
+        """
+        API Docs: https://developers.ultra.io/products/chain-api/get-producers.html
+        """
+        try:
+            response = self._post("/chain/get_producers", {"limit": 999, "lower_bound": 0})
+        except requests.RequestException as e:
+            raise UltraAPIError(f"Error fetching producers: {e}")
+
+        try:
+            return ProducersResponse(**response)
+        except Exception as e:
+            raise UltraAPIError(f"Error parsing producers response: {e}")
+
+    def get_factory(self, id: int, table: FactoryTable) -> FactoryResponse:
+        response = self.get_table_rows(
+            code="eosio.nft.ft", table=table.value, scope="eosio.nft.ft", limit=1, lower_bound=id
+        )
+
+        try:
+            return FactoryResponse(**response.rows[0])
+        except Exception as e:
+            raise UltraAPIError(f"Error parsing factory response: {e}")

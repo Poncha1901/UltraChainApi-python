@@ -1,7 +1,7 @@
-from .api.api import UltraAPI, UltraAPIError, MainProducerEndpoint, TestProducerEndpoint
-from .interfaces.abi_response import AbiResponse
-from .interfaces.block_reponse import BlockResponse
-from .interfaces.account_response import AccountResponse
-from .interfaces.transaction_response import TransactionResponse
-from .interfaces.chain_info_response import ChainInfoResponse
-from .interfaces.table_scope import BaseTableResponse, TableResponse
+from ultra_chain_api.api.api import UltraAPI, UltraAPIError, MainProducerEndpoint, TestProducerEndpoint
+from ultra_chain_api.interfaces.abi_response import AbiResponse
+from ultra_chain_api.interfaces.block_response import BlockResponse
+from ultra_chain_api.interfaces.account_response import AccountResponse
+from ultra_chain_api.interfaces.transaction_response import TransactionResponse
+from ultra_chain_api.interfaces.chain_info_response import ChainInfoResponse
+from ultra_chain_api.interfaces.table_scope import BaseTableResponse, TableResponse

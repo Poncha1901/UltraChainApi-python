@@ -18,3 +18,7 @@ class ChainInfoResponse(BaseModel):
     fork_db_head_block_num: int
     fork_db_head_block_id: str
     server_full_version_string: str
+    total_cpu_weight: int
+    total_net_weight: int
+    earliest_available_block_num: int
+    last_irreversible_block_time: str
