@@ -1,3 +1,5 @@
+# ruff: noqa: F401
+
 from ultra_chain_api.api.api import UltraAPI, UltraAPIError, MainProducerEndpoint, TestProducerEndpoint
 from ultra_chain_api.interfaces.abi_response import AbiResponse
 from ultra_chain_api.interfaces.block_response import BlockResponse
