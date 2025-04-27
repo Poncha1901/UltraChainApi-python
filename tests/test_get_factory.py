@@ -1,14 +1,10 @@
 from ultra_chain_api.api.api import MainProducerEndpoint
 from ultra_chain_api.interfaces.factory_response import FactoryResponse
+from ultra_chain_api import UltraAPI
+from ultra_chain_api.api.api import FactoryTable
 
 
 def test_get_factory() -> None:
-    """
-    Test the get_factory method of the UltraAPI class.
-    """
-    from ultra_chain_api import UltraAPI
-    from ultra_chain_api.api.api import FactoryTable
-
     client = UltraAPI(producer_endpoint=MainProducerEndpoint.SWEDEN.value)
     factory_response = client.get_factory(2212, FactoryTable.FACTORY_B)
 

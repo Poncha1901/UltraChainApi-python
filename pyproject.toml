@@ -1,8 +1,8 @@
 [project]
-name = "ultrachainapi-python"
-version = "0.1.0"
+name = "ultra-chain-api"
+version = "0.2.0"
 description = "UltraChainAPI Python Client"
-author = "Hugo Chapon"
+authors = [{name="Hugo Chapon", email="chapon.hugo95@gmail.com"}]
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
@@ -26,7 +26,7 @@ dev = [
 
 [tool.ruff]
 line-length = 120
-lint.extend-ignore = ["E203"]
+lint.extend-ignore = ["E203", "F401"]
 
 [tool.mypy]
 plugins = ["pydantic.mypy", "sqlmypy"]

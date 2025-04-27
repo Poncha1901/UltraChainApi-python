@@ -1,12 +1,7 @@
-# UltraChainApi-python
+# Ultra Chain API Python
 
-UltraChainApi-python is a Python library designed to interact with the blockchain API seamlessly. It provides an easy-to-use interface for developers to integrate blockchain functionalities into their Python applications.
-
-## Features
-
-- Simplified access to blockchain API endpoints.
-- Lightweight and easy to integrate.
-- Designed for Python developers.
+Ultra Chain Api Python is a Python wrapper for the Ultra chain API. It provides an easy-to-use interface for developers to seamlessly integrate Ultra blockchain functionalities into their Python applications.
+DOCS: https://developers.ultra.io/products/chain-api/
 
 ## Installation
 
@@ -19,7 +14,7 @@ pip install ultra-chain-api
 ```python
 from ultra_chain_api import UltraAPI
 
-# Can also import the producers
+# You can also import the producers
 # from ultra_chain_api import MainProducerEndpoint
 # client = UltraAPI(producer_endpoint=MainProducerEndpoint.SWEDEN.value)
 

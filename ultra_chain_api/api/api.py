@@ -184,8 +184,8 @@ class UltraAPI:
             raise UltraAPIError(f"Error fetching table rows: {e}")
         try:
             return TableResponse(**response)
-        except Exception:
-            raise UltraAPIError(f"Table not found: {table}")
+        except Exception as e:
+            raise UltraAPIError(f"Error Parsing TableResponse: {e}")
 
     def get_transaction(self, id: str) -> TransactionResponse:
         """
@@ -201,8 +201,8 @@ class UltraAPI:
 
         try:
             return TransactionResponse(**response)
-        except Exception:
-            raise UltraAPIError(f"Error parsing Transaction: {id}")
+        except Exception as e:
+            raise UltraAPIError(f"Error parsing Transaction {id}: {e}")
 
     def get_code(self, account: str) -> CodeResponse:
         try:
